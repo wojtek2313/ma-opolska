@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Małopolska Razem – klikalny mock</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0B0C}
+a{color:#D4FF4F}a:hover{color:#E6FF8F}
+button,input,textarea{font-family:'Archivo',system-ui,sans-serif}
+.scroll{scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:9px 14px;border-radius:999px;border:1px solid #34343A;background:transparent;color:#F4F4F0;font-weight:600;font-size:13px;white-space:nowrap;cursor:pointer;min-height:38px}
+.chip-on{background:#D4FF4F;color:#0B0B0C;border-color:#D4FF4F}
+.card{background:#161618;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.lbl{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#A3A39C}
+.btn{min-height:48px;border-radius:999px;border:0;font-weight:700;font-size:15px;cursor:pointer;padding:0 20px}
+.btn-pri{background:#D4FF4F;color:#0B0B0C}
+.btn-sec{background:#26262A;color:#F4F4F0}
+.btn-done{background:transparent;color:#D4FF4F;border:1.5px solid #D4FF4F}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:0;cursor:pointer;font-size:11px;font-weight:600;padding:10px 0;min-height:56px}
+.field{width:100%;box-sizing:border-box;background:#0B0B0C;border:1px solid #34343A;border-radius:14px;color:#F4F4F0;font-size:15px;padding:12px 14px}
+.field:focus{outline:2px solid #D4FF4F;outline-offset:1px}
+button:focus-visible{outline:2px solid #D4FF4F;outline-offset:2px}
+</style>
+
+<style>
+html,body{height:100%}
+body{display:flex;align-items:center;justify-content:center;background:#050506;overflow:hidden}
+#phone{width:390px;height:844px;border-radius:36px;overflow:hidden;box-shadow:0 0 0 1px #26262A,0 30px 80px rgba(0,0,0,.6);transform-origin:center center;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="phone"><div id="app"></div></div>
+<template id="tpl">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0B0B0C; color: #F4F4F0; font-family: 'Archivo', system-ui, sans-serif; display: flex; flex-direction: column; position: relative; overflow: hidden">
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; top: 16px; left: 16px; right: 16px; z-index: 20; background: #F4F4F0; color: #0B0B0C; border-radius: 16px; padding: 14px 16px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.4)">{{toast}}</div>
+</sc-if>
+
+<sc-if value="{{showTopBar}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 12px">
+<div style="font-weight: 800; font-size: 21px; letter-spacing: -0.02em">MAŁOPOLSKA<span style="color: #D4FF4F">.</span>RAZEM</div>
+<div style="display: flex; align-items: center; gap: 6px; background: #161618; border-radius: 999px; padding: 8px 12px; font-weight: 700; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 6.5 7 1-5 4.8 1.2 7-6.2-3.3-6.2 3.3L7 14.3 2 9.5l7-1z"></path></svg>
+<span style="white-space: nowrap">{{points}} pkt</span>
+</div>
+</div>
+</sc-if>
+
+<div class="scroll" ref="{{scrollRef}}" onScroll="{{onScroll}}" style="flex-grow: 1; overflow-y: auto; overflow-x: hidden">
+
+<!-- ODKRYWAJ -->
+<sc-if value="{{showFeed}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; padding-bottom: 24px">
+<div style="margin: 4px 12px 0; border-radius: 28px; background: {{hero.bg}}; color: #0B0B0C; overflow: hidden; position: relative">
+<button onClick="{{openPicker}}" aria-haspopup="dialog" aria-label="Zmień gminę, obecnie {{gminaLabel}}" style="width: 100%; background: transparent; border: 0; padding: 20px 20px 0; color: #0B0B0C; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase">Twoja okolica · zmień</span>
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="font-size: 40px; line-height: 1; font-weight: 800; letter-spacing: -0.03em">{{gminaLabel}}</span>
+<span style="width: 40px; height: 40px; border-radius: 999px; background: #0B0B0C; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{hero.bg}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span>
+</span>
+<span style="font-size: 13px; font-weight: 600">{{gminaSub}}</span>
+</button>
+<div style="position: relative; margin-top: 8px">
+<sc-if value="{{hero.isRatusz}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: rynek i ratusz" style="display: block"><rect x="0" y="184" width="390" height="6" fill="#0B0B0C"></rect><polygon points="20,190 20,130 55,105 90,130 90,190" fill="#0B0B0C"></polygon><polygon points="300,190 300,135 335,110 370,135 370,190" fill="#0B0B0C"></polygon><rect x="110" y="120" width="170" height="70" fill="#0B0B0C"></rect><polygon points="100,122 195,82 290,122" fill="#0B0B0C"></polygon><rect x="178" y="40" width="34" height="85" fill="#0B0B0C"></rect><polygon points="172,42 195,4 218,42" fill="#0B0B0C"></polygon><circle cx="195" cy="66" r="9" fill="{{hero.bg}}"></circle><path d="M195 66V60M195 66h5" stroke="#0B0B0C" stroke-width="2" fill="none"></path><rect x="128" y="138" width="14" height="20" fill="{{hero.bg}}"></rect><rect x="156" y="138" width="14" height="20" fill="{{hero.bg}}"></rect><rect x="220" y="138" width="14" height="20" fill="{{hero.bg}}"></rect><rect x="248" y="138" width="14" height="20" fill="{{hero.bg}}"></rect><path d="M184 190v-24a11 11 0 0 1 22 0v24z" fill="{{hero.bg}}"></path><rect x="40" y="145" width="12" height="14" fill="{{hero.bg}}"></rect><rect x="66" y="145" width="12" height="14" fill="{{hero.bg}}"></rect><rect x="318" y="150" width="12" height="14" fill="{{hero.bg}}"></rect><rect x="342" y="150" width="12" height="14" fill="{{hero.bg}}"></rect></svg>
+</sc-if>
+<sc-if value="{{hero.isKopalnia}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: szyb kopalni soli" style="display: block"><rect x="0" y="184" width="390" height="6" fill="#0B0B0C"></rect><path d="M195 40L268 142" stroke="#0B0B0C" stroke-width="8" fill="none" stroke-linecap="round"></path><path d="M150 142L195 40L240 142" stroke="#0B0B0C" stroke-width="10" fill="none" stroke-linejoin="round"></path><path d="M163 112h64M174 86h42" stroke="#0B0B0C" stroke-width="6" fill="none"></path><circle cx="195" cy="40" r="26" fill="none" stroke="#0B0B0C" stroke-width="8"></circle><path d="M195 14v52M169 40h52" stroke="#0B0B0C" stroke-width="4" fill="none"></path><rect x="70" y="140" width="250" height="50" fill="#0B0B0C"></rect><polygon points="62,142 195,118 328,142" fill="#0B0B0C"></polygon><rect x="92" y="154" width="16" height="22" fill="{{hero.bg}}"></rect><rect x="124" y="154" width="16" height="22" fill="{{hero.bg}}"></rect><rect x="250" y="154" width="16" height="22" fill="{{hero.bg}}"></rect><rect x="282" y="154" width="16" height="22" fill="{{hero.bg}}"></rect><path d="M183 190v-26a12 12 0 0 1 24 0v26z" fill="{{hero.bg}}"></path><rect x="332" y="158" width="44" height="32" fill="#0B0B0C"></rect><polygon points="328,160 354,144 380,160" fill="#0B0B0C"></polygon></svg>
+</sc-if>
+<sc-if value="{{hero.isGory}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: góry" style="display: block"><polygon points="0,190 0,120 60,70 110,110 175,20 240,95 290,60 350,110 390,85 390,190" fill="#0B0B0C"></polygon><polygon points="175,20 160,42 168,40 175,48 183,38 192,44" fill="#F4F4F0"></polygon><polygon points="290,60 280,74 288,72 294,78 300,70" fill="#F4F4F0"></polygon><polygon points="60,70 50,82 58,80 64,86 70,80" fill="#F4F4F0"></polygon><path d="M0 190 Q100 138 200 168 T390 158 V190z" fill="{{hero.bg}}"></path><rect x="70" y="160" width="40" height="30" fill="#0B0B0C"></rect><polygon points="64,162 90,140 116,162" fill="#0B0B0C"></polygon><rect x="84" y="172" width="10" height="18" fill="{{hero.bg}}"></rect><polygon points="300,186 312,150 324,186" fill="#0B0B0C"></polygon><polygon points="322,186 336,140 350,186" fill="#0B0B0C"></polygon></svg>
+</sc-if>
+<sc-if value="{{hero.isTarnow}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: renesansowy ratusz" style="display: block"><rect x="0" y="184" width="390" height="6" fill="#0B0B0C"></rect><rect x="100" y="105" width="190" height="85" fill="#0B0B0C"></rect><rect x="100" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="124" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="148" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="172" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="196" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="220" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="244" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="268" y="89" width="14" height="16" fill="#0B0B0C"></rect><rect x="180" y="30" width="30" height="75" fill="#0B0B0C"></rect><path d="M176 32Q195 0 214 32z" fill="#0B0B0C"></path><rect x="192" y="0" width="6" height="10" fill="#0B0B0C"></rect><path d="M115 190v-22a12 12 0 0 1 24 0v22z" fill="{{hero.bg}}"></path><path d="M150 190v-22a12 12 0 0 1 24 0v22z" fill="{{hero.bg}}"></path><path d="M183 190v-22a12 12 0 0 1 24 0v22z" fill="{{hero.bg}}"></path><path d="M218 190v-22a12 12 0 0 1 24 0v22z" fill="{{hero.bg}}"></path><path d="M253 190v-22a12 12 0 0 1 24 0v22z" fill="{{hero.bg}}"></path><rect x="122" y="120" width="12" height="18" fill="{{hero.bg}}"></rect><rect x="157" y="120" width="12" height="18" fill="{{hero.bg}}"></rect><rect x="226" y="120" width="12" height="18" fill="{{hero.bg}}"></rect><rect x="261" y="120" width="12" height="18" fill="{{hero.bg}}"></rect></svg>
+</sc-if>
+<sc-if value="{{hero.isKrakow}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: Rynek Główny" style="display: block"><rect x="0" y="184" width="390" height="6" fill="#0B0B0C"></rect><rect x="0" y="150" width="100" height="40" fill="#0B0B0C"></rect><polygon points="0,152 25,132 50,152" fill="#0B0B0C"></polygon><polygon points="50,152 75,128 100,152" fill="#0B0B0C"></polygon><rect x="140" y="120" width="90" height="70" fill="#0B0B0C"></rect><polygon points="136,122 185,96 234,122" fill="#0B0B0C"></polygon><rect x="110" y="50" width="32" height="140" fill="#0B0B0C"></rect><polygon points="106,52 126,0 146,52" fill="#0B0B0C"></polygon><polygon points="104,62 108,44 112,62" fill="#0B0B0C"></polygon><polygon points="140,62 144,44 148,62" fill="#0B0B0C"></polygon><rect x="160" y="80" width="26" height="110" fill="#0B0B0C"></rect><path d="M156 82Q173 50 190 82z" fill="#0B0B0C"></path><path d="M120 92v-14a6 6 0 0 1 12 0v14z" fill="{{hero.bg}}"></path><path d="M167 112v-12a6 6 0 0 1 12 0v12z" fill="{{hero.bg}}"></path><rect x="240" y="140" width="145" height="50" fill="#0B0B0C"></rect><rect x="244" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="262" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="280" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="298" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="316" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="334" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="352" y="128" width="10" height="12" fill="#0B0B0C"></rect><rect x="370" y="128" width="10" height="12" fill="#0B0B0C"></rect><path d="M252 190v-18a10 10 0 0 1 20 0v18z" fill="{{hero.bg}}"></path><path d="M282 190v-18a10 10 0 0 1 20 0v18z" fill="{{hero.bg}}"></path><path d="M312 190v-18a10 10 0 0 1 20 0v18z" fill="{{hero.bg}}"></path><path d="M342 190v-18a10 10 0 0 1 20 0v18z" fill="{{hero.bg}}"></path><rect x="14" y="160" width="8" height="10" fill="{{hero.bg}}"></rect><rect x="36" y="160" width="8" height="10" fill="{{hero.bg}}"></rect><rect x="62" y="160" width="8" height="10" fill="{{hero.bg}}"></rect><rect x="84" y="160" width="8" height="10" fill="{{hero.bg}}"></rect></svg>
+</sc-if>
+<sc-if value="{{hero.isRegion}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 390 190" width="100%" height="190" role="img" aria-label="Ilustracja: krajobraz Małopolski" style="display: block"><polygon points="0,190 0,110 50,80 90,105 140,50 185,95 230,70 280,100 330,60 390,95 390,190" fill="#0B0B0C"></polygon><polygon points="140,50 130,64 138,62 144,68 150,60" fill="#F4F4F0"></polygon><polygon points="330,60 321,72 328,70 334,76 340,68" fill="#F4F4F0"></polygon><path d="M0 190 Q90 128 190 160 T390 150 V190z" fill="{{hero.bg}}"></path><rect x="170" y="132" width="44" height="44" fill="#0B0B0C"></rect><rect x="186" y="104" width="12" height="30" fill="#0B0B0C"></rect><polygon points="182,106 192,84 202,106" fill="#0B0B0C"></polygon><rect x="186" y="154" width="12" height="22" fill="{{hero.bg}}"></rect><polygon points="60,182 72,146 84,182" fill="#0B0B0C"></polygon><polygon points="300,176 314,136 328,176" fill="#0B0B0C"></polygon><polygon points="324,178 336,148 348,178" fill="#0B0B0C"></polygon></svg>
+</sc-if>
+<span style="position: absolute; right: 12px; bottom: 14px; background: #0B0B0C; color: #F4F4F0; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 5px 10px">{{hero.caption}}</span>
+</div>
+</div>
+<div style="position: sticky; top: 0; z-index: 5; background: #0B0B0C; padding: 14px 0 12px; border-bottom: 1px solid {{stickyBorder}}">
+<div class="scroll" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 16px; align-items: center">
+<sc-if value="{{collapsed}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{openPicker}}" aria-label="Zmień gminę, obecnie {{gminaLabel}}" style="flex-shrink: 0; display: flex; align-items: center; gap: 6px; background: {{hero.bg}}; color: #0B0B0C; border: 0; border-radius: 999px; padding: 9px 12px; font-weight: 700; font-size: 13px; cursor: pointer; min-height: 38px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path></svg>{{gminaLabel}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+<span style="width: 1px; height: 24px; background: #34343A; flex-shrink: 0"></span>
+</sc-if>
+<sc-for list="{{typy}}" as="t" hint-placeholder-count="5">
+<button class="{{t.cls}}" onClick="{{t.pick}}">{{t.name}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding-top: 4px">
+<div style="padding: 0 20px; font-size: 13px; color: #A3A39C">{{feedCount}}</div>
+<sc-if value="{{feedEmpty}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="margin: 0 20px; align-items: flex-start">
+<div style="font-weight: 700; font-size: 17px">Tu jeszcze cisza</div>
+<div style="font-size: 14px; color: #A3A39C">Bądź pierwszą osobą, która coś zgłosi albo zorganizuje w tej gminie.</div>
+<button class="btn btn-pri" onClick="{{goAdd}}">Dodaj aktywność</button>
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 28px; padding: 0 16px">
+<sc-for list="{{feed}}" as="f" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 156px; border-radius: 22px; background: {{f.color}}; color: #0B0B0C; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; border: 1.5px solid #0B0B0C; border-radius: 999px; padding: 5px 10px">{{f.kindLabel}}</span>
+<span style="font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>{{f.gmina}}</span>
+</div>
+<div>
+<div style="font-weight: 800; font-size: 42px; line-height: 1; letter-spacing: -0.03em">{{f.big}}</div>
+<div style="font-weight: 600; font-size: 13px; margin-top: 6px">{{f.bigSub}}</div>
+</div>
+</div>
+<div style="padding: 0 4px; display: flex; flex-direction: column; gap: 4px">
+<div style="font-weight: 700; font-size: 18px; line-height: 1.25">{{f.title}}</div>
+<div style="font-size: 13px; color: #A3A39C">{{f.meta}}</div>
+</div>
+<div style="display: flex; gap: 8px; padding: 0 4px">
+<button class="{{f.ctaCls}}" style="flex-grow: 1" onClick="{{f.cta}}">{{f.ctaLabel}}</button>
+<sc-if value="{{f.hasSecond}}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-pri" onClick="{{f.second}}">{{f.secondLabel}}</button>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- DODAJ -->
+<sc-if value="{{showAdd}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 24px">
+<h1 style="margin: 0; font-size: 34px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em">Co chcesz<br>zmienić?</h1>
+<div style="display: flex; gap: 8px">
+<button class="{{rodzajFormCls}}" onClick="{{pickFormalne}}">Zgłoszenie do instytucji</button>
+<button class="{{rodzajOddCls}}" onClick="{{pickOddolne}}">Zgłoszenie społeczne</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="lbl">Gdzie</div>
+<button onClick="{{openAddPicker}}" aria-haspopup="dialog" style="display: flex; align-items: center; gap: 10px; background: #161618; border: 1px solid {{addBorder}}; border-radius: 14px; padding: 12px 14px; color: #F4F4F0; cursor: pointer; min-height: 48px; text-align: left">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>
+<span style="flex-grow: 1; font-size: 15px; font-weight: 700">{{addGmina}}</span>
+<span style="font-size: 12px; color: #A3A39C">{{addGminaNote}}</span>
+</button>
+<sc-if value="{{addBlocked}}" hint-placeholder-val="{{ false }}">
+<div style="background: #33270F; border: 1px solid #F2B84B; border-radius: 14px; padding: 12px; display: flex; gap: 10px; align-items: flex-start">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F2B84B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-weight: 700; font-size: 14px; color: #F7D28C">Nie możesz dodawać w gminie {{addGmina}}</div>
+<div style="font-size: 13px; line-height: 1.4">Jesteś mieszkanką gminy {{home}}. Tutaj możesz przeglądać zgłoszenia, dołączać do wydarzeń i pomagać. Punkty za pomoc trafią do Twojej gminy.</div>
+<button class="chip" style="align-self: flex-start" onClick="{{resetAddGmina}}">Wróć do gminy {{home}}</button>
+</div>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="opis">Opisz własnymi słowami</label>
+<textarea id="opis" class="field" rows="5" style="resize: none; line-height: 1.4" value="{{addText}}" onChange="{{onAddText}}"></textarea>
+</div>
+<div style="display: flex; gap: 8px">
+<button class="btn btn-sec" aria-label="Dyktuj głosem" style="width: 48px; padding: 0; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F4F4F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><path d="M12 18v3"></path></svg></button>
+<button class="{{analyzeCls}}" style="flex-grow: 1" onClick="{{analyze}}">Analizuj z AI</button>
+</div>
+
+<sc-if value="{{analyzed}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{showDup}}" hint-placeholder-val="{{ true }}">
+<div class="card" style="background: #FF7A45; color: #0B0B0C">
+<div style="font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase">Ktoś już to zgłosił</div>
+<div style="font-weight: 800; font-size: 19px; line-height: 1.2">Ciemno na ul. Polnej i przy szkole</div>
+<div style="font-size: 14px; font-weight: 500">{{dupSub}}</div>
+<div style="display: flex; gap: 8px">
+<button class="btn" style="background: #0B0B0C; color: #F4F4F0; flex-grow: 1" onClick="{{joinDup}}">Dołącz · +5 pkt</button>
+<button class="btn" style="background: transparent; color: #0B0B0C; border: 1.5px solid #0B0B0C" onClick="{{publishSeparate}}">Osobno</button>
+</div>
+</div>
+</sc-if>
+<div class="card">
+<div class="lbl">AI rozpoznało</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div><div style="font-size: 12px; color: #A3A39C">Rodzaj</div><div style="font-weight: 700; font-size: 15px">{{aiRodzaj}}</div></div>
+<div><div style="font-size: 12px; color: #A3A39C">Kategoria</div><div style="font-weight: 700; font-size: 15px">Oświetlenie, bezpieczeństwo</div></div>
+<div><div style="font-size: 12px; color: #A3A39C">Gmina</div><div style="font-weight: 700; font-size: 15px">{{addGmina}}</div></div>
+<div><div style="font-size: 12px; color: #A3A39C">Kogo dotyczy</div><div style="font-weight: 700; font-size: 15px">Dzieci, droga do szkoły</div></div>
+</div>
+<sc-if value="{{isFormalne}}" hint-placeholder-val="{{ true }}">
+<div style="border-top: 1px solid #2A2A2E; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<div><div style="font-size: 12px; color: #A3A39C">Adresat (podpowiedź AI)</div><div style="font-weight: 700; font-size: 15px">{{addAdresat}}</div><div style="font-size: 12px; color: #A3A39C">drogi gminne i oświetlenie</div></div>
+<button class="chip" onClick="{{changeAdresat}}">Zmień</button>
+</div>
+</sc-if>
+<sc-if value="{{isOddolne}}" hint-placeholder-val="{{ false }}">
+<div style="border-top: 1px solid #2A2A2E; padding-top: 12px; font-size: 14px; color: #D8D8D2; line-height: 1.4">Prowadzisz to sam. Kontakt z profilu: <b>Anna</b> (publicznie), e-mail tylko dla uczestników, telefon ukryty.</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<!-- KARTA ZGŁOSZENIA -->
+<sc-if value="{{showDetail}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 28px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<button class="chip" onClick="{{closeDetail}}">← Wróć</button>
+<span style="font-size: 12px; color: #A3A39C">{{d.gmina}}</span>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-if value="{{d.grupa}}" hint-placeholder-val="{{ true }}">
+<span style="font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; background: #FF7A45; color: #0B0B0C; border-radius: 999px; padding: 5px 10px">Zgłoszenie zbiorcze</span>
+</sc-if>
+<span style="font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid #34343A; border-radius: 999px; padding: 5px 10px">{{d.statusLabel}}</span>
+</div>
+<h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{d.title}}</h1>
+<div style="font-size: 14px; color: #D8D8D2">Do: <b>{{d.adresat}}</b></div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div class="card" style="gap: 2px; padding: 14px"><div style="font-weight: 800; font-size: 26px">{{d.zgloszen}}</div><div style="font-size: 12px; color: #A3A39C">zgłoszeń w grupie</div></div>
+<div class="card" style="gap: 2px; padding: 14px"><div style="font-weight: 800; font-size: 26px">{{d.osob}}</div><div style="font-size: 12px; color: #A3A39C">unikalnych osób</div></div>
+<div class="card" style="gap: 2px; padding: 14px"><div style="font-weight: 800; font-size: 26px; color: #D4FF4F">{{d.trendNum}}</div><div style="font-size: 12px; color: #A3A39C">w tym tygodniu</div></div>
+</div>
+
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><div class="lbl">Przyrost zgłoszeń · 8 tygodni</div><div style="font-size: 12px; color: #A3A39C">{{d.zasieg}}</div></div>
+<div style="display: flex; align-items: flex-end; gap: 6px; height: 64px">
+<sc-for list="{{d.bars}}" as="b" hint-placeholder-count="8">
+<div style="flex-grow: 1; height: {{b.h}}px; background: {{b.c}}; border-radius: 4px"></div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{isResident}}" hint-placeholder-val="{{ true }}">
+<button class="{{supportCls}}" onClick="{{toggleSupport}}">{{supportLabel}}</button>
+</sc-if>
+<sc-if value="{{notResident}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="border: 1px solid #F2B84B">
+<div style="display: flex; gap: 10px; align-items: flex-start">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F2B84B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-weight: 700; font-size: 15px">Tylko podgląd</div>
+<div style="font-size: 13px; line-height: 1.4; color: #D8D8D2">To zgłoszenie dotyczy gminy {{d.gm}}. Popierać i komentować mogą jej mieszkańcy. Ty możesz pomóc przy realizacji.</div>
+</div>
+</div>
+<button class="{{helpCls}}" onClick="{{offerHelp}}">{{helpLabel}}</button>
+</div>
+</sc-if>
+
+<div class="card">
+<div class="lbl">Status</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{d.steps}}" as="s" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 14px; height: 14px; border-radius: 999px; background: {{s.dot}}; border: 2px solid {{s.ring}}; box-sizing: border-box; flex-shrink: 0"></div>
+<div style="flex-grow: 1; font-size: 15px; font-weight: {{s.weight}}; color: {{s.color}}">{{s.label}}</div>
+<div style="font-size: 12px; color: #A3A39C">{{s.date}}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size: 13px; color: #D4FF4F; font-weight: 600">{{d.termin}}</div>
+</div>
+
+<div class="card">
+<div class="lbl">Koszty</div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><div><div style="font-size: 15px">Szacunek</div><div style="font-size: 12px; color: #A3A39C">{{d.kosztNote}}</div></div><div style="font-weight: 700; font-size: 15px; white-space: nowrap">{{d.koszt}}</div></div>
+<div style="display: flex; justify-content: space-between"><div style="font-size: 15px">Zatwierdzone przez gminę</div><div style="font-weight: 700; font-size: 15px">{{d.zatw}}</div></div>
+<div style="display: flex; justify-content: space-between"><div style="font-size: 15px">Wydane</div><div style="font-weight: 700; font-size: 15px">{{d.wyd}}</div></div>
+<div style="font-size: 12px; color: #A3A39C">Finansowanie: {{d.zrodlo}}</div>
+</div>
+
+<div class="card">
+<div class="lbl">O czym piszą mieszkańcy</div>
+<sc-for list="{{d.watki}}" as="w" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>{{w.label}}</span><span style="font-weight: 700">{{w.n}}</span></div>
+<div style="height: 6px; background: #26262A; border-radius: 999px"><div style="height: 6px; width: {{w.pct}}%; background: #FF7A45; border-radius: 999px"></div></div>
+</div>
+</sc-for>
+<div style="font-size: 15px; line-height: 1.4; color: #D8D8D2; font-style: italic; border-top: 1px solid #2A2A2E; padding-top: 12px">{{d.cytat}}</div>
+</div>
+
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div class="lbl">Głos mieszkańców · {{commentCount}}</div>
+<div style="display: flex; gap: 6px">
+<button class="{{sortTopCls}}" style="min-height: 32px; padding: 6px 10px; font-size: 12px" onClick="{{sortTop}}">Najlepsze</button>
+<button class="{{sortNewCls}}" style="min-height: 32px; padding: 6px 10px; font-size: 12px" onClick="{{sortNew}}">Najnowsze</button>
+</div>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 12px; font-weight: 600; color: #8FB8FF; background: #1A2233; border-radius: 999px; padding: 4px 10px">{{cntProp}} propozycje</span>
+<span style="font-size: 12px; font-weight: 600; color: #FFB4B4; background: #331A1A; border-radius: 999px; padding: 4px 10px">{{cntSprz}} sprzeciwy</span>
+<span style="font-size: 12px; font-weight: 600; color: #D8D8D2; background: #222226; border-radius: 999px; padding: 4px 10px">{{cntUwag}} uwagi</span>
+</div>
+<sc-for list="{{comments}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: {{c.bg}}; border: 1px solid {{c.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-weight: 700; font-size: 13px">{{c.who}}</span>
+<sc-if value="{{c.official}}" hint-placeholder-val="{{ false }}"><span style="font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; background: #D4FF4F; color: #0B0B0C; border-radius: 999px; padding: 3px 8px">Odpowiedź oficjalna</span></sc-if>
+<sc-if value="{{c.hasType}}" hint-placeholder-val="{{ true }}"><span style="font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: {{c.typeColor}}; background: {{c.typeBg}}; border-radius: 999px; padding: 3px 8px">{{c.type}}</span></sc-if>
+</div>
+<div style="font-size: 14px; line-height: 1.4">{{c.text}}</div>
+<sc-if value="{{c.pinnedNote}}" hint-placeholder-val="{{ false }}"><div style="font-size: 11px; color: #A3A39C">Najlepiej oceniony sprzeciw jest zawsze widoczny wysoko, żeby głos mniejszości nie ginął.</div></sc-if>
+<sc-if value="{{c.votable}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; gap: 8px">
+<button aria-label="Zgadzam się" aria-pressed="{{c.upPressed}}" onClick="{{c.up}}" style="display: flex; align-items: center; gap: 6px; background: {{c.upBg}}; color: {{c.upColor}}; border: 1px solid {{c.upBorder}}; border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 36px; font-weight: 700; font-size: 13px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11H4V10zM7 10l4-7c1.7 0 2.8 1.3 2.5 3L13 9h5.5a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 17.1 20H7"></path></svg>{{c.ups}}</button>
+<button aria-label="Nie zgadzam się" aria-pressed="{{c.downPressed}}" onClick="{{c.down}}" style="display: flex; align-items: center; gap: 6px; background: {{c.downBg}}; color: {{c.downColor}}; border: 1px solid {{c.downBorder}}; border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 36px; font-weight: 700; font-size: 13px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 14V3H4v11zM7 14l4 7c1.7 0 2.8-1.3 2.5-3L13 15h5.5a2 2 0 0 0 2-2.4l-1.4-7A2 2 0 0 0 17.1 4H7"></path></svg>{{c.downs}}</button>
+<div style="flex-grow: 1; height: 6px; background: #3A1D1D; border-radius: 999px; overflow: hidden"><div style="height: 6px; width: {{c.agreePct}}%; background: #D4FF4F"></div></div>
+<span style="font-size: 12px; color: #A3A39C; white-space: nowrap">{{c.agreeLabel}}</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{isResident}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div class="lbl" style="margin-top: 4px">Dodaj</div>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{ctypes}}" as="ct" hint-placeholder-count="3">
+<button class="{{ct.cls}}" onClick="{{ct.pick}}">{{ct.name}}</button>
+</sc-for>
+</div>
+<label class="lbl" for="kom" style="position: absolute; left: -9999px">Treść</label>
+<input id="kom" class="field" value="{{draft}}" onChange="{{onDraft}}" placeholder="{{draftPlaceholder}}">
+<button class="btn btn-sec" onClick="{{sendComment}}">Wyślij</button>
+<div style="font-size: 12px; color: #A3A39C; line-height: 1.4">Test moderacji AI: wpisz „Urzędnicy to idioci” albo „Żenada, nic nie robicie”.</div>
+</div>
+</sc-if>
+<sc-if value="{{notResident}}" hint-placeholder-val="{{ false }}">
+<div style="font-size: 13px; color: #A3A39C; line-height: 1.4; border-top: 1px solid #2A2A2E; padding-top: 12px">Komentować i oceniać mogą mieszkańcy gminy {{d.gm}}.</div>
+</sc-if>
+<sc-if value="{{modBlock}}" hint-placeholder-val="{{ false }}">
+<div style="background: #3A1414; border: 1px solid #FF6B6B; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 700; font-size: 14px; color: #FFB4B4">Komentarz zablokowany</div>
+<div style="font-size: 13px; line-height: 1.4">Zawiera obraźliwe określenia wobec osób. Krytyka urzędu jest w porządku: napisz, co konkretnie jest nie tak.</div>
+<button class="chip" style="align-self: flex-start" onClick="{{appeal}}">Odwołaj się</button>
+</div>
+</sc-if>
+<sc-if value="{{modWarn}}" hint-placeholder-val="{{ false }}">
+<div style="background: #33270F; border: 1px solid #F2B84B; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 700; font-size: 14px; color: #F7D28C">Może zostać odebrany jako obraźliwy</div>
+<div style="font-size: 13px; line-height: 1.4">Propozycja AI: „Sprawa ciągnie się za długo. Prosimy o konkretny termin realizacji.”</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button class="chip chip-on" onClick="{{useSuggestion}}">Użyj propozycji</button>
+<button class="chip" onClick="{{publishAnyway}}">Opublikuj mimo to</button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<!-- RANKING -->
+<sc-if value="{{showRanking}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 24px">
+<h1 style="margin: 0; font-size: 34px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em">Ranking gmin</h1>
+<div style="font-size: 13px; color: #A3A39C">Sezon jesień 2026 · punkty na 1000 mieszkańców · dane demo</div>
+<div class="scroll" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 0 20px">
+<sc-for list="{{ligi}}" as="l" hint-placeholder-count="4">
+<button class="{{l.cls}}" onClick="{{l.pick}}">{{l.name}}</button>
+</sc-for>
+</div>
+<div class="card" style="background: #D4FF4F; color: #0B0B0C">
+<div style="font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase">Nagroda w lidze (przykład)</div>
+<div style="font-weight: 800; font-size: 36px; line-height: 1; letter-spacing: -0.02em">200 000 zł</div>
+<div style="font-size: 14px; font-weight: 500">Mieszkańcy zwycięskiej gminy głosują, na co ją przeznaczyć. {{ligaOpis}}</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{rank}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: {{r.bg}}; border: 1px solid {{r.border}}">
+<div style="width: 24px; font-weight: 800; font-size: 18px; color: {{r.posColor}}">{{r.pos}}</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 15px"><span style="font-weight: 700">{{r.name}}</span><span style="font-weight: 700">{{r.score}}</span></div>
+<div style="height: 6px; background: #26262A; border-radius: 999px"><div style="height: 6px; width: {{r.pct}}%; background: {{r.bar}}; border-radius: 999px"></div></div>
+<sc-if value="{{r.mine}}" hint-placeholder-val="{{ false }}"><div style="font-size: 12px; color: #D4FF4F; font-weight: 600">Twoja gmina · brakuje {{r.gap}} pkt do podium</div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="card">
+<div class="lbl">Głosowanie · {{leader}}</div>
+<div style="font-size: 15px; font-weight: 700">Na co przeznaczyć nagrodę?</div>
+<div style="font-size: 12px; color: #A3A39C">Kandydaci to najmocniej popierane zgłoszenia z aplikacji w tej gminie.</div>
+<sc-for list="{{opcje}}" as="o" hint-placeholder-count="3">
+<button onClick="{{o.pick}}" style="position: relative; overflow: hidden; text-align: left; background: #0B0B0C; border: 1px solid {{o.border}}; border-radius: 14px; padding: 14px; color: #F4F4F0; cursor: pointer; min-height: 48px">
+<div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{o.pct}}%; background: #D4FF4F; opacity: 0.14"></div>
+<div style="position: relative; display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600"><span>{{o.label}}</span><span>{{o.pctLabel}}</span></div>
+</button>
+</sc-for>
+<div style="font-size: 12px; color: #A3A39C">Głosować mogą konta zweryfikowane przez login.gov.pl.</div>
+</div>
+</div>
+</sc-if>
+
+<!-- PROFIL -->
+<sc-if value="{{showProfil}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 24px">
+<div style="display: flex; align-items: center; gap: 14px">
+<div style="width: 64px; height: 64px; border-radius: 999px; background: #8FB8FF; color: #0B0B0C; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 24px">AK</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-weight: 800; font-size: 22px">Anna K.</div>
+<div style="font-size: 13px; color: #A3A39C">Mieszkanka: {{home}}</div>
+<div style="font-size: 12px; font-weight: 600; color: #D4FF4F; display: flex; align-items: center; gap: 4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>Zweryfikowane · login.gov.pl</div>
+</div>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><div style="font-weight: 800; font-size: 30px">{{points}} pkt</div><div style="font-weight: 700; font-size: 15px; color: #D4FF4F">{{level}}</div></div>
+<div style="height: 8px; background: #26262A; border-radius: 999px"><div style="height: 8px; width: {{levelPct}}%; background: #D4FF4F; border-radius: 999px"></div></div>
+<div style="font-size: 13px; color: #A3A39C">{{levelNext}}</div>
+</div>
+<div class="card" style="border: 1px solid #D4FF4F">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div class="lbl" style="color: #D4FF4F">Moja gmina w rankingu</div>
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid #34343A; border-radius: 999px; padding: 4px 8px">{{homeLiga}}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: #D4FF4F; color: #0B0B0C; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; flex-shrink: 0">{{homePos}}</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-weight: 800; font-size: 22px">{{home}}</div>
+<div style="font-size: 13px; color: #A3A39C">{{homePosLabel}}</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="background: #0B0B0C; border-radius: 14px; padding: 12px"><div style="font-weight: 800; font-size: 20px">{{points}}</div><div style="font-size: 12px; color: #A3A39C">Twój wkład w sezonie</div></div>
+<div style="background: #0B0B0C; border-radius: 14px; padding: 12px"><div style="font-weight: 800; font-size: 20px">{{homeShare}}</div><div style="font-size: 12px; color: #A3A39C">punktów gminy</div></div>
+</div>
+<div style="font-size: 13px; color: #D8D8D2; line-height: 1.4">Wszystkie Twoje punkty trafiają do tej gminy, także za aktywność w innych miejscach Małopolski.</div>
+<button class="{{homeBtnCls}}" onClick="{{changeHome}}">{{homeBtnLabel}}</button>
+<div style="font-size: 12px; color: #A3A39C">Gminę zamieszkania można zmienić raz na sezon, żeby nikt nie przenosił punktów tam, gdzie akurat walczy się o nagrodę.</div>
+</div>
+<div class="lbl">Odznaki</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div class="card" style="align-items: center; gap: 8px; padding: 14px 8px; text-align: center"><div style="width: 44px; height: 44px; border-radius: 999px; background: #D4FF4F"></div><div style="font-size: 12px; font-weight: 600">Pierwsza inicjatywa</div></div>
+<div class="card" style="align-items: center; gap: 8px; padding: 14px 8px; text-align: center"><div style="width: 44px; height: 44px; border-radius: 999px; background: #8FB8FF"></div><div style="font-size: 12px; font-weight: 600">Pomoc seniorom</div></div>
+<div class="card" style="align-items: center; gap: 8px; padding: 14px 8px; text-align: center"><div style="width: 44px; height: 44px; border-radius: 999px; border: 2px dashed #4A4A50; box-sizing: border-box"></div><div style="font-size: 12px; font-weight: 600; color: #A3A39C">Ekologia · 2/5</div></div>
+</div>
+<div class="card">
+<div class="lbl">Prywatność danych kontaktowych</div>
+<div style="font-size: 12px; color: #A3A39C">Dane trafiają do Twoich ogłoszeń automatycznie. Stuknij, aby zmienić.</div>
+<sc-for list="{{privacy}}" as="p" hint-placeholder-count="4">
+<button onClick="{{p.cycle}}" style="display: flex; justify-content: space-between; align-items: center; background: transparent; border: 0; border-top: 1px solid #2A2A2E; padding: 12px 0 0; color: #F4F4F0; cursor: pointer; min-height: 44px">
+<span style="font-size: 15px">{{p.label}}</span>
+<span style="font-size: 13px; font-weight: 700; color: {{p.color}}">{{p.value}}</span>
+</button>
+</sc-for>
+</div>
+<button class="btn btn-sec" onClick="{{openInst}}">Przełącz na widok instytucji (demo)</button>
+</div>
+</sc-if>
+
+<!-- INSTYTUCJA -->
+<sc-if value="{{showInst}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px 20px 28px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<button class="chip" onClick="{{closeInst}}">← Widok mieszkańca</button>
+<span style="font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #8FB8FF">Instytucja</span>
+</div>
+<h1 style="margin: 0; font-size: 30px; line-height: 1.05; font-weight: 800; letter-spacing: -0.02em">Urząd Gminy Bochnia</h1>
+<sc-if value="{{showMerge}}" hint-placeholder-val="{{ true }}">
+<div class="card" style="border: 1px solid #FF7A45">
+<div class="lbl" style="color: #FF7A45">AI proponuje połączenie</div>
+<div style="font-size: 15px; line-height: 1.4">3 nowe zgłoszenia pasują do <b>Ciemno na ul. Polnej i przy szkole</b>:</div>
+<div style="font-size: 13px; color: #D8D8D2; line-height: 1.6">„Brak latarni przy szkole”<br>„Niebezpieczne przejście na Polnej”<br>„Wieczorem nie widać pieszych”</div>
+<div style="display: flex; gap: 8px">
+<button class="btn btn-pri" style="flex-grow: 1" onClick="{{approveMerge}}">Zatwierdź połączenie</button>
+<button class="btn btn-sec" onClick="{{rejectMerge}}">Rozdziel</button>
+</div>
+</div>
+</sc-if>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div class="lbl">Tematy w gminie</div>
+<div style="display: flex; gap: 6px">
+<button class="{{sortLiczbaCls}}" onClick="{{sortLiczba}}">Liczba</button>
+<button class="{{sortTrendCls}}" onClick="{{sortTrend}}">Trend</button>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{tematy}}" as="t" hint-placeholder-count="4">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #161618; border-radius: 16px; padding: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-weight: 700; font-size: 15px">{{t.name}}</div>
+<div style="font-size: 12px; color: #A3A39C">{{t.sub}}</div>
+</div>
+<div style="text-align: right; flex-shrink: 0">
+<div style="font-weight: 800; font-size: 20px">{{t.n}}</div>
+<div style="font-size: 12px; font-weight: 700; color: {{t.trendColor}}">{{t.trend}}</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div class="card">
+<div class="lbl">Ciemno na ul. Polnej · status: {{instStatus}}</div>
+<button class="btn btn-pri" onClick="{{takeUp}}">{{takeUpLabel}}</button>
+<button class="btn btn-sec" onClick="{{markDone}}">Oznacz jako zrealizowane</button>
+<div style="font-size: 12px; color: #A3A39C">Każda zmiana od razu pojawia się na karcie zgłoszenia u wszystkich 41 osób.</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{showTabs}}" hint-placeholder-val="{{ true }}">
+<nav style="display: flex; background: #0B0B0C; border-top: 1px solid #1F1F23; padding: 4px 8px 18px">
+<button class="tab" style="color: {{tabOdkColor}}" onClick="{{goFeed}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Odkrywaj</button>
+<button class="tab" style="color: {{tabAddColor}}" onClick="{{goAdd}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="6"></rect><path d="M12 8v8M8 12h8"></path></svg>Dodaj</button>
+<button class="tab" style="color: {{tabRankColor}}" onClick="{{goRanking}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V10M12 20V4M18 20v-7"></path></svg>Ranking</button>
+<button class="tab" style="color: {{tabProfColor}}" onClick="{{goProfil}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>Profil</button>
+</nav>
+</sc-if>
+
+<sc-if value="{{pickerOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-label="Wybierz gminę" style="position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; justify-content: flex-end">
+<button aria-label="Zamknij wybór gminy" onClick="{{closePicker}}" style="position: absolute; inset: 0; background: rgba(0,0,0,0.62); border: 0; cursor: pointer"></button>
+<div style="position: relative; height: 640px; background: #121214; border-radius: 28px 28px 0 0; border-top: 1px solid #2A2A2E; display: flex; flex-direction: column; overflow: hidden">
+<div style="display: flex; justify-content: center; padding-top: 10px"><div style="width: 40px; height: 5px; border-radius: 999px; background: #3A3A40"></div></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 8px">
+<div style="font-weight: 800; font-size: 24px; letter-spacing: -0.02em">{{pickerTitle}}</div>
+<button class="chip" onClick="{{closePicker}}">Gotowe</button>
+</div>
+<div style="padding: 4px 20px 12px; display: flex; flex-direction: column; gap: 12px">
+<label for="szukaj-gminy" style="position: relative; display: block">
+<span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A3A39C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span>
+<input id="szukaj-gminy" class="field" style="padding-left: 42px" placeholder="Szukaj gminy lub powiatu" aria-label="Szukaj gminy lub powiatu" value="{{query}}" onChange="{{onQuery}}">
+</label>
+<button onClick="{{useLocation}}" style="display: flex; align-items: center; gap: 12px; background: transparent; border: 1px solid #34343A; border-radius: 14px; padding: 12px 14px; color: #F4F4F0; cursor: pointer; min-height: 48px; text-align: left">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"></path></svg>
+<span style="font-size: 15px; font-weight: 600">Użyj mojej lokalizacji</span>
+</button>
+<sc-if value="{{showRecent}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
+<span class="lbl">Ostatnio</span>
+<sc-for list="{{recent}}" as="r" hint-placeholder-count="2">
+<button class="{{r.cls}}" onClick="{{r.pick}}">{{r.name}}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<div class="scroll" style="flex-grow: 1; overflow-y: auto; padding: 0 12px 24px">
+<sc-for list="{{pickerGroups}}" as="grp" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column">
+<div class="lbl" style="padding: 14px 8px 6px">{{grp.name}}</div>
+<sc-for list="{{grp.rows}}" as="row" hint-placeholder-count="3">
+<button onClick="{{row.pick}}" style="display: flex; align-items: center; gap: 12px; background: {{row.bg}}; border: 0; border-radius: 14px; padding: 12px; color: #F4F4F0; cursor: pointer; min-height: 52px; text-align: left">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 700">{{row.name}}</span>
+<span style="font-size: 12px; color: #A3A39C">{{row.sub}}</span>
+</span>
+<span style="font-size: 12px; font-weight: 700; color: {{row.countColor}}; background: #1F1F23; border-radius: 999px; padding: 4px 10px">{{row.count}}</span>
+<sc-if value="{{row.selected}}" hint-placeholder-val="{{ false }}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>
+</sc-if>
+</button>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{pickerEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 24px 8px; font-size: 14px; color: #A3A39C">Nie znaleziono gminy. Spróbuj innej nazwy albo nazwy powiatu.</div>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</template>
+<script>
+(function(){
+  class DCLogic {
+    constructor(){ this.props = {}; }
+    setState(p){ const v = typeof p === 'function' ? p(this.state, this.props) : p; this.state = Object.assign({}, this.state, v); schedule(); }
+    forceUpdate(){ schedule(); }
+  }
+  window.DCLogic = DCLogic;
+  let comp, pending = false;
+  function schedule(){ if (pending) return; pending = true; queueMicrotask(() => { pending = false; render(); }); }
+  const WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  function look(path, scope){
+    if (path === 'true') return true; if (path === 'false') return false;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+    const parts = path.split('.'); let v = scope[parts[0]];
+    for (let i = 1; i < parts.length && v != null; i++) v = v[parts[i]];
+    return v;
+  }
+  const str = (v) => v == null ? '' : String(v);
+  const EV = { onclick: 'click', onchange: 'input', onscroll: 'scroll', oninput: 'input', onkeydown: 'keydown' };
+  function build(node, scope, out){
+    if (node.nodeType === 3) { out.push(document.createTextNode(node.nodeValue.replace(HOLE, (_, p) => str(look(p, scope))))); return; }
+    if (node.nodeType !== 1) return;
+    const tag = node.localName;
+    if (tag === 'sc-if') {
+      const m = WHOLE.exec(node.getAttribute('value') || '');
+      if (m && look(m[1], scope)) node.childNodes.forEach((c) => build(c, scope, out));
+      return;
+    }
+    if (tag === 'sc-for') {
+      const m = WHOLE.exec(node.getAttribute('list') || ''); const as = node.getAttribute('as') || 'item';
+      const list = (m && look(m[1], scope)) || [];
+      list.forEach((item, i) => { const s2 = Object.create(scope); s2[as] = item; s2.$index = i; node.childNodes.forEach((c) => build(c, s2, out)); });
+      return;
+    }
+    const el = node.namespaceURI === 'http://www.w3.org/2000/svg' ? document.createElementNS(node.namespaceURI, node.localName) : document.createElement(tag);
+    for (const a of Array.from(node.attributes)) {
+      const n = a.name, val = a.value;
+      if (n.startsWith('hint-')) continue;
+      const whole = WHOLE.exec(val);
+      if (EV[n]) { const fn = whole && look(whole[1], scope); if (typeof fn === 'function') el.addEventListener(EV[n], (e) => fn(e)); continue; }
+      if (n === 'ref') { const fn = whole && look(whole[1], scope); if (typeof fn === 'function') fn(el); continue; }
+      if (n === 'value') { el.value = whole ? str(look(whole[1], scope)) : val.replace(HOLE, (_, p) => str(look(p, scope))); continue; }
+      el.setAttribute(n, whole ? str(look(whole[1], scope)) : val.replace(HOLE, (_, p) => str(look(p, scope))));
+    }
+    const kids = []; (node.content || node).childNodes.forEach((c) => build(c, scope, kids));
+    kids.forEach((k) => el.appendChild(k));
+    if (tag === 'textarea') { el.value = el.getAttribute('value') || el.value; }
+    out.push(el);
+  }
+  let tpl, mount;
+  function render(){
+    const active = document.activeElement; const fid = active && active.id; let sel = null;
+    if (fid && active.selectionStart != null) sel = [active.selectionStart, active.selectionEnd];
+    const scrolls = Array.from(mount.querySelectorAll('.scroll')).map((e) => [e.scrollTop, e.scrollLeft]);
+    const vals = comp.renderVals(); const out = [];
+    tpl.content.childNodes.forEach((c) => build(c, vals, out));
+    mount.replaceChildren(...out);
+    Array.from(mount.querySelectorAll('.scroll')).forEach((e, i) => { if (scrolls[i]) { e.scrollTop = scrolls[i][0]; e.scrollLeft = scrolls[i][1]; } });
+    if (fid) { const f = document.getElementById(fid); if (f) { f.focus(); if (sel && f.setSelectionRange) try { f.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
+  }
+  window.__dcStart = function(Component){
+    tpl = document.getElementById('tpl'); mount = document.getElementById('app');
+    comp = new Component(); comp.props = {}; render();
+    const fit = () => { const s = Math.min(1, (window.innerHeight - 24) / 844, (window.innerWidth - 16) / 390); document.getElementById('phone').style.transform = 'scale(' + s + ')'; };
+    window.addEventListener('resize', fit); fit();
+  };
+})();
+</script>
+<script>
+
+class Component extends DCLogic {
+  state = {
+    tab: 'odkrywaj', gmina: 'Cała Małopolska', typ: 'Wszystko', detail: null, inst: false,
+    points: 340, toast: '', supported: {}, status1: 2, merged: false, mergeDecided: false,
+    joined: {}, checked: {}, draft: '', mod: null,
+    addText: 'Wieczorem przy szkole na Polnej jest kompletnie ciemno, dzieci wracają z zajęć po 17 poboczem.',
+    analyzed: false, rodzaj: 'formalne', joinedDup: false,
+    liga: 'Średnie', vote: null, sortBy: 'liczba',
+    privacy: { imie: 0, nazwisko: 1, telefon: 2, email: 1 },
+    comments: {
+      z1: [
+        { who: 'Marek, ul. Polna', type: 'Uwaga', up: 12, down: 0, text: 'Potwierdzam, od tygodnia nie działa też latarnia przy przystanku.' },
+        { who: 'Kasia', type: 'Uwaga', up: 9, down: 1, text: 'Dodałam zdjęcie z 18:00. Kierowcy nie widzą dzieci na poboczu.' },
+        { who: 'Tomasz, ul. Polna 14', type: 'Sprzeciw', up: 6, down: 11, text: 'Nie chcę latarni LED pod oknami sypialni. Oświetlmy tylko przejście i okolice szkoły.' },
+        { who: 'Ela, Rada Rodziców', type: 'Propozycja', up: 18, down: 3, text: 'Zamiast 14 latarni: 6 przy szkole i przejściu plus wyniesione przejście dla pieszych. Taniej i bezpieczniej.' }
+      ],
+      z5: [ { who: 'Józef, Gdów', type: 'Uwaga', up: 22, down: 1, text: 'Do przychodni jest 9 km, a autobus jeździ dwa razy dziennie.' } ],
+      z8: [ { who: 'Zarząd Dróg Miasta Tarnowa', text: 'Naprawa zaplanowana na 6 października.', official: true } ]
+    }
+  };
+
+  flash(msg, pts) {
+    this.setState({ toast: msg, points: this.state.points + (pts || 0) });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2600);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const s = this.state;
+    const homeG = s.home || 'Bochnia';
+    const chip = (on) => on ? 'chip chip-on' : 'chip';
+    const lime = '#D4FF4F', grey = '#A3A39C';
+
+    const gminyList = ['Cała Małopolska', 'Bochnia', 'Wieliczka', 'Nowy Targ', 'Tarnów'];
+    const typyList = ['Wszystko', 'Zgłoszenia', 'Wydarzenia', 'Pomoc', 'Hobby'];
+    const typMap = { 'Zgłoszenia': 'zgl', 'Wydarzenia': 'wyd', 'Pomoc': 'pom', 'Hobby': 'hob' };
+    const colors = { zgl: '#FF7A45', wyd: '#D4FF4F', pom: '#8FB8FF', hob: '#E7C6FF' };
+
+    const z1Count = s.merged ? 26 : 23;
+    const z1People = 41 + (s.supported.z1 ? 1 : 0);
+    const statuses = ['Zgłoszone', 'Zebrane poparcie', 'Analiza gminy', 'W realizacji', 'Zrealizowane'];
+
+    const openD = (id) => () => this.setState({ detail: id, mod: null, draft: '' });
+    const items = [
+      { id: 'z1', kind: 'zgl', kindLabel: 'Zgłoszenie zbiorcze', gmina: 'Bochnia', big: String(z1Count), bigSub: 'zgłoszeń · +9 w tym tygodniu', title: 'Ciemno na ul. Polnej i przy szkole', meta: 'Do: Urząd Gminy Bochnia · ' + statuses[s.status1] },
+      { id: 'e2', kind: 'wyd', kindLabel: 'Wydarzenie', gmina: 'Bochnia', big: 'SOB 11.10', bigSub: (s.joined.e2 ? 19 : 18) + '/30 osób · 10:00', title: 'Sprzątanie brzegu Raby', meta: 'Organizuje: Koło Wędkarskie Bochnia · worki i rękawice na miejscu' },
+      { id: 'p3', kind: 'pom', kindLabel: 'Pomoc sąsiedzka', gmina: 'Wieliczka', big: 'POTRZEBA', bigSub: 'do 2 km od Ciebie', title: 'Zakupy dla pani Heleny z os. Niepodległości', meta: 'Raz w tygodniu, najlepiej w czwartek po południu' },
+      { id: 'h4', kind: 'hob', kindLabel: 'Hobby', gmina: 'Nowy Targ', big: 'WT 18:00', bigSub: 'co tydzień · 7 osób', title: 'Szachy w Miejskiej Bibliotece', meta: 'Wszystkie poziomy, plansze na miejscu' },
+      { id: 'z5', kind: 'zgl', kindLabel: 'Zgłoszenie zbiorcze', gmina: 'Wieliczka', big: '37', bigSub: 'zgłoszeń z 6 gmin', title: 'Brak autobusu do przychodni', meta: 'Do: Województwo Małopolskie · Analiza' },
+      { id: 'e6', kind: 'wyd', kindLabel: 'Wydarzenie', gmina: 'Tarnów', big: 'NDZ 19.10', bigSub: (s.joined.e6 ? 43 : 42) + ' osób · 14:00', title: 'Festyn sąsiedzki na Mościcach', meta: 'Organizuje: Rada Osiedla Mościce' },
+      { id: 'h7', kind: 'hob', kindLabel: 'Hobby', gmina: 'Nowy Targ', big: 'SOB 8:00', bigSub: 'nowa grupa · 3 osoby', title: 'Nordic walking nad Dunajcem', meta: 'Szukamy 2 osób do stałej grupy' },
+      { id: 'z8', kind: 'zgl', kindLabel: 'Zgłoszenie', gmina: 'Tarnów', big: '4', bigSub: 'zgłoszenia · w realizacji', title: 'Dziura w chodniku przy ul. Kolejowej', meta: 'Do: Zarząd Dróg Miasta Tarnowa · W realizacji' }
+    ];
+
+    const feed = items
+      .filter((it) => s.gmina === 'Cała Małopolska' || it.gmina === s.gmina)
+      .filter((it) => s.typ === 'Wszystko' || it.kind === typMap[s.typ])
+      .map((it) => {
+        const out = Object.assign({}, it, { color: colors[it.kind], hasSecond: false, second: null, secondLabel: '' });
+        if (it.kind === 'zgl') {
+          out.ctaLabel = it.gmina === homeG ? 'Zobacz zgłoszenie' : 'Podgląd zgłoszenia'; out.ctaCls = 'btn btn-sec'; out.cta = openD(it.id); if (it.gmina !== homeG) out.meta = out.meta + ' · tylko podgląd';
+        } else if (it.kind === 'wyd') {
+          const j = !!s.joined[it.id], c = !!s.checked[it.id];
+          out.ctaLabel = j ? 'Jesteś zapisany' : 'Dołączam';
+          out.ctaCls = j ? 'btn btn-done' : 'btn btn-sec';
+          out.cta = () => { this.setState({ joined: Object.assign({}, s.joined, { [it.id]: !j }) }); if (!j) this.flash('Zapisano. Check-in kodem QR na miejscu da +15 pkt.'); };
+          out.hasSecond = j && !c;
+          out.secondLabel = 'Check-in QR';
+          out.second = () => { this.setState({ checked: Object.assign({}, s.checked, { [it.id]: true }) }); this.flash('Check-in potwierdzony · +15 pkt', 15); };
+          if (c) { out.ctaLabel = 'Obecność potwierdzona'; }
+        } else if (it.kind === 'pom') {
+          const j = !!s.joined[it.id];
+          out.ctaLabel = j ? 'Zgłosiłaś się do pomocy' : 'Pomogę';
+          out.ctaCls = j ? 'btn btn-done' : 'btn btn-sec';
+          out.cta = () => { this.setState({ joined: Object.assign({}, s.joined, { [it.id]: true }) }); this.flash('Pani Helena dostała powiadomienie. +30 pkt po potwierdzeniu pomocy.'); };
+        } else {
+          const j = !!s.joined[it.id];
+          out.ctaLabel = j ? 'Jesteś w grupie' : 'Dołączam do grupy';
+          out.ctaCls = j ? 'btn btn-done' : 'btn btn-sec';
+          out.cta = () => { this.setState({ joined: Object.assign({}, s.joined, { [it.id]: true }) }); this.flash('Witaj w grupie! +10 pkt za każde potwierdzone spotkanie.'); };
+        }
+        return out;
+      });
+
+    // Detail
+    const D = {
+      z1: { title: 'Ciemno na ul. Polnej i przy szkole', gm: 'Bochnia', gmina: 'Gmina Bochnia', adresat: 'Urząd Gminy Bochnia · Wydział Infrastruktury', grupa: true, zgloszen: z1Count, osob: z1People, trendNum: '+9', zasieg: '2 sołectwa', barsRaw: [2, 3, 2, 4, 3, 5, 6, s.merged ? 12 : 9], statusIdx: s.status1, dates: ['2 wrz', '18 wrz', '24 wrz', s.status1 >= 3 ? '1 paź' : '', s.status1 >= 4 ? '1 paź' : ''], koszt: '180–240 tys. zł', kosztNote: 'szacunek AI z podobnych wdrożeń', zatw: s.status1 >= 3 ? '210 000 zł' : '—', wyd: s.status1 >= 4 ? '198 400 zł' : '—', zrodlo: s.status1 >= 3 ? 'budżet gminy' : 'do decyzji gminy', watki: [['Oświetlenie ulicy', 15], ['Przejście dla pieszych', 6], ['Droga dzieci do szkoły', 5]], cytat: '„Dzieci wracają z zajęć po 17 i idą poboczem po ciemku.”', termin: s.status1 === 2 ? 'Gmina ma jeszcze 14 dni na odpowiedź' : (s.status1 === 3 ? 'Gmina podjęła sprawę · realizacja do 30 listopada' : 'Zrealizowane · rozliczenie poniżej') },
+      z5: { title: 'Brak autobusu do przychodni', gm: 'Wieliczka', gmina: 'Powiat wielicki', adresat: 'Województwo Małopolskie · Departament Transportu', grupa: true, zgloszen: 37, osob: 64 + (s.supported.z5 ? 1 : 0), trendNum: '+4', zasieg: '6 gmin', barsRaw: [5, 4, 6, 5, 4, 6, 5, 4], statusIdx: 2, dates: ['12 sie', '20 sie', '3 wrz', '', ''], koszt: '[DO USTALENIA]', kosztNote: 'brak podobnych wdrożeń w katalogu', zatw: '—', wyd: '—', zrodlo: 'do decyzji województwa', watki: [['Dojazd do przychodni', 21], ['Dojazd do szkoły średniej', 9], ['Kursy wieczorne', 7]], cytat: '„Bez samochodu do lekarza jedzie się pół dnia.”', termin: 'Województwo ma jeszcze 22 dni na odpowiedź' },
+      z8: { title: 'Dziura w chodniku przy ul. Kolejowej', gm: 'Tarnów', gmina: 'Miasto Tarnów', adresat: 'Zarząd Dróg Miasta Tarnowa', grupa: false, zgloszen: 4, osob: 9 + (s.supported.z8 ? 1 : 0), trendNum: '0', zasieg: '1 ulica', barsRaw: [1, 2, 1, 0, 0, 0, 0, 0], statusIdx: 3, dates: ['15 wrz', '19 wrz', '22 wrz', '26 wrz', ''], koszt: '12 tys. zł', kosztNote: 'szacunek AI', zatw: '14 500 zł', wyd: '9 800 zł (w toku)', zrodlo: 'budżet miasta', watki: [['Bezpieczeństwo pieszych', 4], ['Wózki i rowery', 2]], cytat: '„Starsza pani przewróciła się tu w zeszłym tygodniu.”', termin: 'Naprawa zaplanowana na 6 października' }
+    };
+    const did = s.detail;
+    const raw = did ? D[did] : D.z1;
+    const maxBar = Math.max.apply(null, raw.barsRaw.concat([1]));
+    const maxW = Math.max.apply(null, raw.watki.map((w) => w[1]));
+    const d = Object.assign({}, raw, {
+      statusLabel: statuses[raw.statusIdx],
+      bars: raw.barsRaw.map((v, i) => ({ h: Math.max(4, Math.round(v / maxBar * 64)), c: i === raw.barsRaw.length - 1 ? lime : '#3A3A40' })),
+      steps: statuses.map((label, i) => ({
+        label: label, date: raw.dates[i] || '',
+        dot: i < raw.statusIdx ? lime : (i === raw.statusIdx ? '#0B0B0C' : 'transparent'),
+        ring: i <= raw.statusIdx ? lime : '#4A4A50',
+        color: i <= raw.statusIdx ? '#F4F4F0' : '#7C7C76',
+        weight: i === raw.statusIdx ? 700 : 500
+      })),
+      watki: raw.watki.map((w) => ({ label: w[0], n: w[1], pct: Math.round(w[1] / maxW * 100) }))
+    });
+    const supported = !!(did && s.supported[did]);
+    const isResident = raw.gm === homeG;
+    const helped = !!(did && s.helped && s.helped[did]);
+    const addG = s.addGmina || homeG;
+    const addBlocked = addG !== homeG;
+    const commentsRaw = (did && s.comments[did]) || [];
+    const typeStyle = { 'Propozycja': ['#8FB8FF', '#1A2233'], 'Sprzeciw': ['#FFB4B4', '#331A1A'], 'Uwaga': ['#D8D8D2', '#222226'] };
+    const cv = s.cvotes || {};
+    const commentsAll = commentsRaw.map((c, idx) => {
+      const key = did + ':' + idx;
+      const mine = cv[key] || 0;
+      const ups = (c.up || 0) + (mine === 1 ? 1 : 0);
+      const downs = (c.down || 0) + (mine === -1 ? 1 : 0);
+      const total = ups + downs;
+      const vote = (v) => () => {
+        if (!isResident) { this.flash('Oceniać mogą mieszkańcy gminy ' + raw.gm + '.'); return; }
+        this.setState({ cvotes: Object.assign({}, cv, { [key]: mine === v ? 0 : v }) });
+      };
+      const ts = typeStyle[c.type] || typeStyle['Uwaga'];
+      return {
+        idx: idx, pinnedNote: false, score: ups - downs, who: c.who, text: c.text, official: !!c.official,
+        hasType: !c.official, type: c.type || 'Uwaga', typeColor: ts[0], typeBg: ts[1],
+        votable: !c.official,
+        ups: ups, downs: downs,
+        agreePct: total ? Math.round(ups / total * 100) : 0,
+        agreeLabel: total ? Math.round(ups / total * 100) + '% za' : 'brak ocen',
+        up: vote(1), down: vote(-1),
+        upPressed: mine === 1 ? 'true' : 'false', downPressed: mine === -1 ? 'true' : 'false',
+        upBg: mine === 1 ? '#D4FF4F' : 'transparent', upColor: mine === 1 ? '#0B0B0C' : '#F4F4F0', upBorder: mine === 1 ? '#D4FF4F' : '#34343A',
+        downBg: mine === -1 ? '#FF6B6B' : 'transparent', downColor: mine === -1 ? '#0B0B0C' : '#F4F4F0', downBorder: mine === -1 ? '#FF6B6B' : '#34343A',
+        bg: c.official ? '#1E2410' : '#0B0B0C', border: c.official ? '#D4FF4F' : (c.type === 'Sprzeciw' ? '#4A2626' : '#26262A')
+      };
+    });
+    const officialC = commentsAll.filter((c) => c.official);
+    const restC = commentsAll.filter((c) => !c.official);
+    restC.sort((a, b) => (s.csort || 'top') === 'top' ? b.score - a.score : b.idx - a.idx);
+    if ((s.csort || 'top') === 'top') {
+      const si = restC.findIndex((c) => c.type === 'Sprzeciw');
+      if (si > 1) { const sp = restC.splice(si, 1)[0]; sp.pinnedNote = true; restC.splice(1, 0, sp); }
+    }
+    const comments = officialC.concat(restC);
+    const countType = (t) => commentsRaw.filter((c) => !c.official && (c.type || 'Uwaga') === t).length;
+
+    const addComment = (c) => {
+      const all = Object.assign({}, s.comments);
+      all[did] = (all[did] || []).concat([c]);
+      return all;
+    };
+
+    // Ranking
+    const ligiDef = {
+      'Małe': { opis: 'Liga: gminy do 10 tys. mieszkańców.', rows: [['Szczawa', 48.2], ['Lipnica Murowana', 41.0], ['Łososina Dolna', 36.4], ['Iwkowa', 30.9], ['Czarny Dunajec', 24.1]] },
+      'Średnie': { opis: 'Liga: gminy 10–25 tys. mieszkańców.', rows: [['Gdów', 39.5], ['Liszki', 35.2], ['Szczucin', 33.8], ['Bochnia', 31.7], ['Biały Dunajec', 22.6]] },
+      'Duże': { opis: 'Liga: gminy powyżej 25 tys. mieszkańców.', rows: [['Niepołomice', 28.4], ['Wieliczka', 26.0], ['Nowy Sącz', 19.7], ['Tarnów', 17.2], ['Skawina', 15.9]] },
+      'Kraków': { opis: 'Liga 18 dzielnic Krakowa.', rows: [['XIII Podgórze', 21.3], ['I Stare Miasto', 19.8], ['XVIII Nowa Huta', 18.1], ['IV Prądnik Biały', 14.5], ['XII Bieżanów-Prokocim', 12.2]] }
+    };
+    const home = s.home || 'Bochnia';
+    let homeLigaKey = null, homeIdx = -1;
+    Object.keys(ligiDef).forEach((k) => { const i = ligiDef[k].rows.findIndex((r) => r[0] === home); if (i >= 0) { homeLigaKey = k; homeIdx = i; } });
+    const L = ligiDef[s.liga];
+    const top = L.rows[0][1];
+    const third = L.rows[2][1];
+    const rank = L.rows.map((r, i) => {
+      const mine = r[0] === home;
+      return { pos: i + 1, name: r[0], score: r[1].toFixed(1).replace('.', ','), pct: Math.round(r[1] / top * 100), mine: mine, gap: (third - r[1]).toFixed(1).replace('.', ','), bg: mine ? '#1E2410' : '#161618', border: mine ? '#D4FF4F' : '#161618', bar: i === 0 ? lime : '#5A5A62', posColor: i === 0 ? lime : '#F4F4F0' };
+    });
+    const opcjeDef = [['Oświetlenie drogi do szkoły', 41], ['Wiata i ławki przy przystanku', 33], ['Sprzęt dla Koła Gospodyń Wiejskich', 26]];
+    const voted = s.vote !== null;
+    const opcje = opcjeDef.map((o, i) => {
+      const pct = voted ? Math.round((o[1] + (s.vote === i ? 3 : 0)) / 103 * 100) : 0;
+      return { label: o[0], pct: pct, pctLabel: voted ? pct + '%' : 'Głosuj', border: s.vote === i ? lime : '#34343A', pick: () => { if (!voted) { this.setState({ vote: i }); this.flash('Głos oddany · +10 pkt', 10); } } };
+    });
+
+    // Profil
+    const levels = [[0, 'Sąsiad'], [200, 'Aktywista'], [500, 'Lider gminy'], [1000, 'Lider Małopolski']];
+    let li = 0; levels.forEach((l, i) => { if (s.points >= l[0]) li = i; });
+    const next = levels[li + 1];
+    const levelPct = next ? Math.round((s.points - levels[li][0]) / (next[0] - levels[li][0]) * 100) : 100;
+    const levelNames = ['Publiczne', 'Tylko uczestnicy', 'Ukryte'];
+    const levelColors = ['#D4FF4F', '#8FB8FF', '#A3A39C'];
+    const privacy = [['imie', 'Imię'], ['nazwisko', 'Nazwisko'], ['telefon', 'Telefon'], ['email', 'E-mail']].map((p) => {
+      const v = s.privacy[p[0]];
+      return { label: p[1], value: levelNames[v], color: levelColors[v], cycle: () => this.setState({ privacy: Object.assign({}, s.privacy, { [p[0]]: (v + 1) % 3 }) }) };
+    });
+
+    // Instytucja
+    const tematyRaw = [
+      { name: 'Ciemno na ul. Polnej i przy szkole', n: z1Count, t: s.merged ? 12 : 9, sub: 'zgłoszenie zbiorcze · ' + statuses[s.status1] },
+      { name: 'Brak koszy w parku miejskim', n: 12, t: 0, sub: 'zgłoszenie zbiorcze · Zebrane poparcie' },
+      { name: 'Zalewana piwnica szkoły w Łapczycy', n: 8, t: 1, sub: 'Analiza gminy' },
+      { name: 'Plac zabaw na os. Słonecznym', n: 6, t: 4, sub: 'Zebrane poparcie' }
+    ];
+    const tematy = tematyRaw.slice().sort((a, b) => s.sortBy === 'liczba' ? b.n - a.n : b.t - a.t).map((t) => ({
+      name: t.name, sub: t.sub, n: t.n,
+      trend: t.t > 0 ? '+' + t.t + ' / tydz.' + (t.t >= 4 ? ' · szybko rośnie' : '') : 'bez zmian',
+      trendColor: t.t >= 4 ? '#FF7A45' : grey
+    }));
+
+    // Picker gmin
+    const powiaty = [
+      ['Cały region', [['Cała Małopolska', 'wszystkie gminy']]],
+      ['Powiat bocheński', [['Bochnia', 'miasto'], ['Nowy Wiśnicz', 'gmina miejsko-wiejska'], ['Łapanów', 'gmina wiejska']]],
+      ['Powiat wielicki', [['Wieliczka', 'gmina miejsko-wiejska'], ['Niepołomice', 'gmina miejsko-wiejska'], ['Gdów', 'gmina wiejska']]],
+      ['Powiat nowotarski', [['Nowy Targ', 'miasto'], ['Szczawnica', 'gmina miejsko-wiejska'], ['Czarny Dunajec', 'gmina wiejska']]],
+      ['Miasta na prawach powiatu', [['Kraków', 'miasto, 18 dzielnic'], ['Tarnów', 'miasto'], ['Nowy Sącz', 'miasto']]]
+    ];
+    const gminaPowiat = {};
+    powiaty.forEach((p) => p[1].forEach((g) => { gminaPowiat[g[0]] = p[0] === 'Miasta na prawach powiatu' ? 'miasto na prawach powiatu' : p[0].toLowerCase(); }));
+    const countFor = (g) => g === 'Cała Małopolska' ? items.length : items.filter((it) => it.gmina === g).length;
+    const pickG = (g) => {
+      if (s.pickerMode === 'add') {
+        this.setState({ addGmina: g, pickerOpen: false, query: '', analyzed: false });
+        return;
+      }
+      if (s.pickerMode === 'home') {
+        this.setState({ home: g, homeChanged: true, pickerOpen: false, query: '' });
+        this.flash('Od teraz Twoje punkty trafiają do: ' + g);
+        return;
+      }
+      const rec = [g].concat((s.recent || ['Bochnia', 'Wieliczka']).filter((x) => x !== g)).slice(0, 3);
+      this.setState({ gmina: g, pickerOpen: false, query: '', recent: rec, collapsed: false });
+      if (this._sc) this._sc.scrollTop = 0;
+    };
+    const recentList = (s.recent || ['Bochnia', 'Wieliczka']).filter((g) => g !== 'Cała Małopolska');
+    const q = (s.query || '').toLowerCase().trim();
+    const pickerGroups = powiaty.filter((p) => s.pickerMode === 'feed' || !s.pickerMode || p[0] !== 'Cały region').map((p) => {
+      const rows = p[1].filter((g) => !q || g[0].toLowerCase().indexOf(q) >= 0 || p[0].toLowerCase().indexOf(q) >= 0).map((g) => {
+        const n = countFor(g[0]);
+        const sel = (s.pickerMode === 'home' ? home : (s.pickerMode === 'add' ? addG : s.gmina)) === g[0];
+        return { name: g[0], sub: g[1], count: n === 0 ? 'cisza' : n + ' aktywn.', countColor: n === 0 ? '#7C7C76' : '#D4FF4F', selected: sel, bg: sel ? '#1E2410' : 'transparent', pick: () => pickG(g[0]) };
+      });
+      return { name: p[0], rows: rows };
+    }).filter((p) => p.rows.length > 0);
+
+    const go = (tab) => () => { this.setState({ tab: tab, detail: null, inst: false, collapsed: false }); if (this._sc) this._sc.scrollTop = 0; };
+    const heroMap = {
+      'Cała Małopolska': ['isRegion', '#FF7A45', 'Małopolska · ilustracja'],
+      'Bochnia': ['isRatusz', '#D4FF4F', 'Bochnia · rynek i ratusz'],
+      'Wieliczka': ['isKopalnia', '#8FB8FF', 'Wieliczka · szyb kopalni soli'],
+      'Nowy Targ': ['isGory', '#E7C6FF', 'Nowy Targ · widok na Tatry'],
+      'Szczawnica': ['isGory', '#E7C6FF', 'Szczawnica · Pieniny'],
+      'Czarny Dunajec': ['isGory', '#E7C6FF', 'Czarny Dunajec · Podhale'],
+      'Tarnów': ['isTarnow', '#FF7A45', 'Tarnów · renesansowy ratusz'],
+      'Kraków': ['isKrakow', '#D4FF4F', 'Kraków · Rynek Główny'],
+      'Nowy Sącz': ['isRatusz', '#8FB8FF', 'Nowy Sącz · rynek i ratusz']
+    };
+    const hm = heroMap[s.gmina] || ['isRatusz', '#D4FF4F', s.gmina + ' · ilustracja poglądowa'];
+    const hero = { bg: hm[1], caption: hm[2], isRegion: false, isRatusz: false, isKopalnia: false, isGory: false, isTarnow: false, isKrakow: false };
+    hero[hm[0]] = true;
+    const analyzedDup = s.analyzed && s.rodzaj === 'formalne' && !s.joinedDup && addG === 'Bochnia';
+
+    return {
+      points: s.points,
+      toast: s.toast, hasToast: !!s.toast,
+      showTopBar: !s.inst && !s.detail,
+      showFeed: !s.inst && !s.detail && s.tab === 'odkrywaj',
+      showAdd: !s.inst && !s.detail && s.tab === 'dodaj',
+      showRanking: !s.inst && !s.detail && s.tab === 'ranking',
+      showProfil: !s.inst && !s.detail && s.tab === 'profil',
+      showDetail: !s.inst && !!s.detail,
+      showInst: s.inst,
+      showTabs: !s.inst,
+      tabOdkColor: s.tab === 'odkrywaj' && !s.detail ? lime : grey,
+      tabAddColor: s.tab === 'dodaj' && !s.detail ? lime : grey,
+      tabRankColor: s.tab === 'ranking' && !s.detail ? lime : grey,
+      tabProfColor: s.tab === 'profil' && !s.detail ? lime : grey,
+      goFeed: go('odkrywaj'), goAdd: go('dodaj'), goRanking: go('ranking'), goProfil: go('profil'),
+
+      gminaLabel: s.gmina,
+      hero: hero,
+      collapsed: !!s.collapsed,
+      stickyBorder: s.collapsed ? '#1F1F23' : '#0B0B0C',
+      scrollRef: (el) => { this._sc = el; },
+      onScroll: (e) => { const c = e.currentTarget.scrollTop > 250; if (c !== !!this.state.collapsed) this.setState({ collapsed: c }); },
+      gminaSub: s.gmina === 'Cała Małopolska' ? '183 gminy · ' + items.length + ' aktywności' : (gminaPowiat[s.gmina] || '') + ' · ' + countFor(s.gmina) + ' aktywności',
+      openPicker: () => this.setState({ pickerOpen: true, query: '', pickerMode: 'feed' }),
+      pickerTitle: s.pickerMode === 'home' ? 'Gmina zamieszkania' : (s.pickerMode === 'add' ? 'Gdzie jest sprawa?' : 'Wybierz gminę'),
+      home: home,
+      homeLiga: homeLigaKey ? (homeLigaKey === 'Kraków' ? 'Liga Krakowa' : 'Liga: ' + homeLigaKey.toLowerCase() + ' gminy') : 'Liga: [poza demo]',
+      homePos: homeIdx >= 0 ? String(homeIdx + 1) : '–',
+      homePosLabel: homeIdx >= 0 ? homeIdx + 1 + '. miejsce · ' + ligiDef[homeLigaKey].rows[homeIdx][1].toFixed(1).replace('.', ',') + ' pkt / 1000 mieszk.' : 'Brak tej gminy w danych demo rankingu',
+      homeShare: (s.points / 16240 * 100).toFixed(1).replace('.', ',') + '%',
+      homeBtnCls: s.homeChanged ? 'btn btn-sec' : 'btn btn-sec',
+      homeBtnLabel: s.homeChanged ? 'Kolejna zmiana od 1 stycznia' : 'Zmień gminę zamieszkania',
+      changeHome: () => { if (s.homeChanged) { this.flash('Gminę zmienisz ponownie w nowym sezonie, od 1 stycznia.'); return; } this.setState({ pickerOpen: true, query: '', pickerMode: 'home' }); },
+      closePicker: () => this.setState({ pickerOpen: false }),
+      pickerOpen: !!s.pickerOpen,
+      query: s.query || '',
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      useLocation: () => { pickG('Bochnia'); this.flash('Lokalizacja: Bochnia'); },
+      showRecent: !(s.query || '') && recentList.length > 0 && (s.pickerMode === 'feed' || !s.pickerMode),
+      recent: recentList.map((g) => ({ name: g, cls: chip(s.gmina === g), pick: () => pickG(g) })),
+      pickerGroups: pickerGroups,
+      pickerEmpty: pickerGroups.length === 0,
+      typy: typyList.map((t) => ({ name: t, cls: chip(s.typ === t), pick: () => this.setState({ typ: t }) })),
+      feed: feed,
+      feedEmpty: feed.length === 0,
+      feedCount: feed.length + (feed.length === 1 ? ' aktywność' : (feed.length >= 2 && feed.length <= 4 ? ' aktywności' : ' aktywności')),
+
+      addText: s.addText,
+      onAddText: (e) => this.setState({ addText: e.target.value, analyzed: false }),
+      analyze: () => { if (addBlocked) { this.flash('Zgłoszenia możesz dodawać tylko w gminie ' + homeG + '.'); return; } this.setState({ analyzed: true, joinedDup: false }); },
+      analyzeCls: addBlocked ? 'btn btn-sec' : 'btn btn-pri',
+      addGmina: addG,
+      addGminaNote: addBlocked ? 'nie Twoja gmina' : 'Twoja gmina',
+      addBorder: addBlocked ? '#F2B84B' : '#26262A',
+      addBlocked: addBlocked && s.tab === 'dodaj',
+      addAdresat: (['Tarnów', 'Kraków', 'Nowy Sącz', 'Nowy Targ'].indexOf(addG) >= 0 ? 'Urząd Miasta ' : 'Urząd Gminy ') + addG,
+      openAddPicker: () => this.setState({ pickerOpen: true, query: '', pickerMode: 'add' }),
+      resetAddGmina: () => this.setState({ addGmina: homeG, analyzed: false }),
+      isResident: isResident,
+      notResident: !isResident,
+      helpCls: helped ? 'btn btn-done' : 'btn btn-sec',
+      helpLabel: helped ? 'Zgłosiłaś chęć pomocy' : 'Chcę pomóc przy realizacji',
+      offerHelp: () => { if (helped) return; this.setState({ helped: Object.assign({}, s.helped || {}, { [did]: true }) }); this.flash('Organizator dostał Twoją deklarację. Punkty po potwierdzeniu trafią do gminy ' + homeG + '.'); },
+      analyzed: s.analyzed,
+      rodzajFormCls: chip(s.rodzaj === 'formalne'),
+      rodzajOddCls: chip(s.rodzaj === 'oddolne'),
+      pickFormalne: () => this.setState({ rodzaj: 'formalne' }),
+      pickOddolne: () => this.setState({ rodzaj: 'oddolne' }),
+      isFormalne: s.rodzaj === 'formalne',
+      isOddolne: s.rodzaj === 'oddolne',
+      aiRodzaj: s.rodzaj === 'formalne' ? 'Zgłoszenie do instytucji' : 'Zgłoszenie społeczne',
+      showDup: analyzedDup,
+      dupSub: z1Count + ' zgłoszeń od ' + z1People + ' osób, 300 m od Ciebie. Twoje szczegóły trafią do zgłoszenia zbiorczego.',
+      joinDup: () => {
+        this.setState({ joinedDup: true, detail: 'z1', supported: Object.assign({}, s.supported, { z1: true }) });
+        this.flash('Dołączono do zgłoszenia zbiorczego · +5 pkt', 5);
+      },
+      publishSeparate: () => { this.setState({ joinedDup: true }); this.flash('Opublikowano. AI zaproponuje gminie połączenie · +5 pkt', 5); },
+      changeAdresat: () => this.flash('Do wyboru: gmina, powiat, województwo, inna instytucja'),
+
+      d: d,
+      closeDetail: () => this.setState({ detail: null, mod: null }),
+      supportCls: supported ? 'btn btn-done' : 'btn btn-pri',
+      supportLabel: supported ? 'Popierasz to zgłoszenie' : 'Chcę to u nas · Popieram',
+      toggleSupport: () => {
+        const on = !supported;
+        this.setState({ supported: Object.assign({}, s.supported, { [did]: on }) });
+        this.flash(on ? 'Poparcie dodane · +1 pkt' : 'Poparcie wycofane', on ? 1 : -1);
+      },
+      comments: comments,
+      commentCount: comments.length,
+      cntProp: countType('Propozycja'), cntSprz: countType('Sprzeciw'), cntUwag: countType('Uwaga'),
+      sortTopCls: chip((s.csort || 'top') === 'top'), sortNewCls: chip(s.csort === 'new'),
+      sortTop: () => this.setState({ csort: 'top' }), sortNew: () => this.setState({ csort: 'new' }),
+      ctypes: ['Propozycja', 'Sprzeciw', 'Uwaga'].map((t) => ({ name: t, cls: chip((s.ctype || 'Uwaga') === t), pick: () => this.setState({ ctype: t }) })),
+      draftPlaceholder: (s.ctype || 'Uwaga') === 'Propozycja' ? 'Co proponujesz zamiast?' : ((s.ctype || 'Uwaga') === 'Sprzeciw' ? 'Z czym się nie zgadzasz i dlaczego?' : 'Napisz, co widzisz na miejscu…'),
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value, mod: null }),
+      modBlock: s.mod === 'block',
+      modWarn: s.mod === 'warn',
+      sendComment: () => {
+        const t = (s.draft || '').toLowerCase().trim();
+        if (!t) return;
+        if (/(idio|debil|kretyn|wynocha|śmieci|złodzie)/.test(t)) { this.setState({ mod: 'block' }); return; }
+        if (/(żenada|zenada|beznadziej|kurde|banda|nieroby)/.test(t)) { this.setState({ mod: 'warn' }); return; }
+        this.setState({ comments: addComment({ who: 'Anna K. (Ty)', type: s.ctype || 'Uwaga', up: 0, down: 0, text: s.draft }), draft: '', mod: null });
+        this.flash('Komentarz opublikowany');
+      },
+      useSuggestion: () => { this.setState({ comments: addComment({ who: 'Anna K. (Ty)', type: s.ctype || 'Uwaga', up: 0, down: 0, text: 'Sprawa ciągnie się za długo. Prosimy o konkretny termin realizacji.' }), draft: '', mod: null }); this.flash('Komentarz opublikowany'); },
+      publishAnyway: () => { this.setState({ comments: addComment({ who: 'Anna K. (Ty)', type: s.ctype || 'Uwaga', up: 0, down: 0, text: s.draft }), draft: '', mod: null }); this.flash('Komentarz opublikowany'); },
+      appeal: () => { this.setState({ mod: null }); this.flash('Odwołanie trafiło do moderatora. Odpowiedź w ciągu 48 h.'); },
+
+      ligi: Object.keys(ligiDef).map((k) => ({ name: k === 'Kraków' ? 'Liga Krakowa' : k + ' gminy', cls: chip(s.liga === k), pick: () => this.setState({ liga: k, vote: null }) })),
+      ligaOpis: L.opis,
+      rank: rank,
+      leader: L.rows[0][0],
+      opcje: opcje,
+
+      level: levels[li][1],
+      levelPct: levelPct,
+      levelNext: next ? 'Jeszcze ' + (next[0] - s.points) + ' pkt do poziomu ' + next[1] : 'Najwyższy poziom',
+      privacy: privacy,
+      openInst: () => this.setState({ inst: true, detail: null }),
+
+      closeInst: () => this.setState({ inst: false, tab: 'odkrywaj' }),
+      showMerge: !s.mergeDecided,
+      approveMerge: () => { this.setState({ merged: true, mergeDecided: true }); this.flash('Połączono · zgłoszenie zbiorcze ma teraz 26 zgłoszeń'); },
+      rejectMerge: () => { this.setState({ mergeDecided: true }); this.flash('Zgłoszenia zostają osobno. Autorzy dostaną informację.'); },
+      sortLiczbaCls: chip(s.sortBy === 'liczba'),
+      sortTrendCls: chip(s.sortBy === 'trend'),
+      sortLiczba: () => this.setState({ sortBy: 'liczba' }),
+      sortTrend: () => this.setState({ sortBy: 'trend' }),
+      tematy: tematy,
+      instStatus: statuses[s.status1],
+      takeUpLabel: s.status1 >= 3 ? 'Podjęte · budżet 210 000 zł' : 'Podejmujemy · zatwierdź budżet',
+      takeUp: () => {
+        if (s.status1 >= 3) return;
+        const all = Object.assign({}, s.comments);
+        all.z1 = (all.z1 || []).concat([{ who: 'Urząd Gminy Bochnia', text: 'Dziękujemy za zgłoszenia. Zlecamy montaż 14 latarni na ul. Polnej, realizacja do 30 listopada.', official: true }]);
+        this.setState({ status1: 3, comments: all });
+        this.flash('Status zmieniony. 41 osób dostało powiadomienie.');
+      },
+      markDone: () => { this.setState({ status1: 4 }); this.flash('Oznaczono jako zrealizowane. Autorzy dostaną prośbę o zdjęcie „po”.'); }
+    };
+  }
+}
+
+window.__dcStart(Component);
+</script>
+</body>
+</html>
